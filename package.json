@@ -1,0 +1,8 @@
+{
+  "name": "backend-life-courses",
+  "version": "1.0.0",
+  "description": "Cursos para dev's",
+  "main": "server.ts",
+  "author": "Luan Campos <luancamposproducoes@gmail.com>",
+  "license": "MIT"
+}
