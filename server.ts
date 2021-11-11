@@ -1,4 +1,5 @@
 import { createConnection } from 'typeorm'
+import 'reflect-metadata'
 
 import App from './src/app'
 import 'dotenv/config'
