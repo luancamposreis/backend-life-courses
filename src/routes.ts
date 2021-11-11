@@ -1,19 +1,9 @@
 import { Request, Response, Router } from 'express'
+import UserController from './controllers/UserController'
 
 const routes = Router()
 
-routes.post('/users', (req: Request, res: Response) => {
-  const { username, name, email, avatar_url, password_hash } = req.body
-
-  const user = {
-    username,
-    name,
-    email,
-    avatar_url,
-    password_hash,
-  }
-
-  res.status(201).json(user)
-})
+// Users
+routes.post('/users', UserController.store)
 
 export default routes
