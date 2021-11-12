@@ -106,9 +106,9 @@ class UserController {
     const user = await userRepository.delete(id)
 
     if (!user.affected) {
-      res.status(401).json({ error: 'Usuário não deletado!' })
+      res.status(400).json({ error: 'Usuário não deletado!' })
     } else {
-      res.status(201).json({ error: 'Usuário deletado com sucesso' })
+      res.status(200).json({ error: 'Usuário deletado com sucesso' })
     }
   }
 }
