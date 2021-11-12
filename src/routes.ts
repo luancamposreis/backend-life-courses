@@ -4,6 +4,7 @@ import multer from 'multer'
 
 import { multerConfig } from './config/multerConfig'
 import AvatarController from './controllers/AvatarController'
+import SessionController from './controllers/SessionController'
 import UserController from './controllers/UserController'
 
 const routes = Router()
@@ -58,5 +59,8 @@ routes.delete(
   param('id').isUUID().withMessage('Usuário não encontrado!'),
   UserController.delete
 )
+
+// Sessions
+routes.post('/sessions', SessionController.createSession)
 
 export default routes
