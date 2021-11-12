@@ -5,38 +5,38 @@ import {
   TableForeignKey,
 } from 'typeorm'
 
-export class createPermissionsRoles1636746828719 implements MigrationInterface {
+export class createUsersRoles1636747761759 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"')
     await queryRunner.createTable(
       new Table({
-        name: 'permissions_roles',
+        name: 'users_roles',
         columns: [
           { name: 'role_id', type: 'uuid' },
-          { name: 'permission_id', type: 'uuid' },
+          { name: 'user_id', type: 'uuid' },
         ],
       })
     )
 
     await queryRunner.createForeignKey(
-      'permissions_roles',
+      'users_roles',
       new TableForeignKey({
-        columnNames: ['permission_id'],
+        columnNames: ['role_id'],
         referencedColumnNames: ['id'],
-        referencedTableName: 'permissions',
-        name: 'fk_permissions_roles_',
+        referencedTableName: 'roles',
+        name: 'fk_roles_users_',
         onDelete: 'CASCADE',
         onUpdate: 'SET NULL',
       })
     )
 
     await queryRunner.createForeignKey(
-      'permissions_roles',
+      'users_roles',
       new TableForeignKey({
-        columnNames: ['role_id'],
+        columnNames: ['user_id'],
         referencedColumnNames: ['id'],
-        referencedTableName: 'roles',
-        name: 'fk_roles_permissions_',
+        referencedTableName: 'users',
+        name: 'fk_users_roles_',
         onDelete: 'CASCADE',
         onUpdate: 'SET NULL',
       })
@@ -44,16 +44,9 @@ export class createPermissionsRoles1636746828719 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropForeignKey(
-      'permissions_roles',
-      'fk_roles_permissions_'
-    )
+    await queryRunner.dropForeignKey('users_roles', 'fk_roles_users_')
+    await queryRunner.dropForeignKey('users_roles', 'fk_users_roles_')
 
-    await queryRunner.dropForeignKey(
-      'permissions_roles',
-      'fk_permissions_roles_'
-    )
-
-    await queryRunner.dropTable('permissions_roles')
+    await queryRunner.dropTable('users_roles')
   }
 }
