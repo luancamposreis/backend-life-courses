@@ -4,14 +4,16 @@ import { getCustomRepository } from 'typeorm'
 import { hash } from 'bcryptjs'
 
 import UserRepository from '../database/repositories/UserRepository'
+import RoleRepository from '../database/repositories/RoleRepository'
 
 let errors
 
 class UserController {
   async store(req: Request, res: Response) {
     const userRepository = getCustomRepository(UserRepository)
+    const roleRepository = getCustomRepository(RoleRepository)
 
-    const { username, name, email, password_hash } = req.body
+    const { username, name, email, password_hash, roles } = req.body
 
     let filename
 
@@ -36,12 +38,17 @@ class UserController {
 
     const passwordHashed = await hash(password_hash, 16)
 
+    const existRoles = await roleRepository.findByIds(roles)
+
+    if (!existRoles) return res.status(400).json({ error: 'Role inexistente!' })
+
     const user = userRepository.create({
       username,
       name,
       email,
       avatar_url: filename,
       password_hash: passwordHashed,
+      roles: existRoles,
     })
 
     await userRepository.save(user)

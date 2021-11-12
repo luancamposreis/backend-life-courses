@@ -5,6 +5,7 @@ import multer from 'multer'
 import { multerConfig } from './config/multerConfig'
 import AvatarController from './controllers/AvatarController'
 import PermissionController from './controllers/PermissionController'
+import RoleController from './controllers/RoleController'
 import SessionController from './controllers/SessionController'
 import UserController from './controllers/UserController'
 
@@ -67,5 +68,9 @@ routes.post('/sessions', SessionController.createSession)
 // Permission Routes
 routes.get('/permissions', PermissionController.index)
 routes.post('/permissions', PermissionController.store)
+
+// Permission Routes
+routes.get('/roles', RoleController.index)
+routes.post('/roles', RoleController.store)
 
 export default routes
