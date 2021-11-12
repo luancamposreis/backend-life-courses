@@ -4,6 +4,7 @@ import multer from 'multer'
 
 import { multerConfig } from './config/multerConfig'
 import AvatarController from './controllers/AvatarController'
+import PermissionController from './controllers/PermissionController'
 import SessionController from './controllers/SessionController'
 import UserController from './controllers/UserController'
 
@@ -12,7 +13,7 @@ const routes = Router()
 // AvatarUrl
 routes.get('/users/avatar/:avatar', AvatarController.show)
 
-// Users
+// User Routes
 routes.post(
   '/users',
   multer(multerConfig).single('avatar_url'),
@@ -60,7 +61,11 @@ routes.delete(
   UserController.delete
 )
 
-// Sessions
+// Session Routes
 routes.post('/sessions', SessionController.createSession)
+
+// Permission Routes
+routes.get('/permissions', PermissionController.index)
+routes.post('/permissions', PermissionController.store)
 
 export default routes
