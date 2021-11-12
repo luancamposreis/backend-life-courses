@@ -31,6 +31,7 @@ routes.post(
   body('password_hash')
     .isLength({ min: 8 })
     .withMessage('A senha deve conter conter no mínimo 8 digitos!'),
+  body('roles').isUUID().withMessage('Role inválida!'),
   UserController.store
 )
 
@@ -67,10 +68,34 @@ routes.post('/sessions', SessionController.createSession)
 
 // Permission Routes
 routes.get('/permissions', PermissionController.index)
-routes.post('/permissions', PermissionController.store)
+routes.post(
+  '/permissions',
+  body('name')
+    .matches(/^[A-Za-z]+([_][A-Za-z]+)*$/)
+    .toUpperCase()
+    .withMessage('Nome da permisão deve conter no minímo 4 caractere'),
+  body('description')
+    .isLength({ min: 4 })
+    .withMessage('Descrição da permissão deve conter no minímo 4 caractere'),
+  PermissionController.store
+)
 
 // Permission Routes
 routes.get('/roles', RoleController.index)
-routes.post('/roles', RoleController.store)
+routes.post(
+  '/roles',
+  body('name')
+    .matches(/^[A-Za-z]+([_][A-Za-z]+)*$/)
+    .toUpperCase()
+    .withMessage('Nome da role deve conter no minímo 4 caractere'),
+  body('description')
+    .isLength({ min: 4 })
+    .withMessage('Descrição da role deve conter no minímo 4 caractere'),
+  body('permissions')
+    .isArray()
+    .isUUID()
+    .withMessage('Permissões não encontrada!'),
+  RoleController.store
+)
 
 export default routes
