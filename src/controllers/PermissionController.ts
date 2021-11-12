@@ -1,12 +1,19 @@
 import { Request, Response } from 'express'
+import { validationResult } from 'express-validator'
 import { getCustomRepository } from 'typeorm'
 
 import PermissionRepository from '../database/repositories/PermissionRepository'
+
+let errors
 
 class PermissionController {
   async store(req: Request, res: Response) {
     const permissionRepository = getCustomRepository(PermissionRepository)
     const { name, description } = req.body
+
+    errors = validationResult(req)
+    if (!errors.isEmpty())
+      return res.status(400).json({ error: errors.array()[0].msg })
 
     const existPermission = await permissionRepository.findOne({ name })
 

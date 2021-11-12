@@ -1,8 +1,11 @@
 import { Request, Response } from 'express'
+import { validationResult } from 'express-validator'
 import { getCustomRepository } from 'typeorm'
 
 import PermissionRepository from '../database/repositories/PermissionRepository'
 import RoleRepository from '../database/repositories/RoleRepository'
+
+let errors
 
 class RoleController {
   async store(req: Request, res: Response) {
@@ -10,6 +13,10 @@ class RoleController {
     const permissionRepository = getCustomRepository(PermissionRepository)
 
     const { name, description, permissions } = req.body
+
+    errors = validationResult(req)
+    if (!errors.isEmpty())
+      return res.status(400).json({ error: errors.array()[0].msg })
 
     const existRole = await roleRepository.findOne({ name })
 
