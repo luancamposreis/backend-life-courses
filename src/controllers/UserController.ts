@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import { validationResult } from 'express-validator'
 import { getCustomRepository } from 'typeorm'
+import { hash } from 'bcryptjs'
 
 import UserRepository from '../database/repositories/UserRepository'
 
@@ -33,12 +34,14 @@ class UserController {
       return res.status(400).json({ error: 'Email já existe!' })
     }
 
+    const passwordHashed = await hash(password_hash, 16)
+
     const user = userRepository.create({
       username,
       name,
       email,
       avatar_url: filename,
-      password_hash,
+      password_hash: passwordHashed,
     })
 
     await userRepository.save(user)
@@ -67,7 +70,7 @@ class UserController {
 
     const userExist = await userRepository.findOne({ id })
     if (!userExist)
-      return res.status(400).json({ error: 'Usuário não encontrado!' })
+      return res.status(400).json({ error: 'Usuário não existe!' })
 
     let filename
 
@@ -77,12 +80,14 @@ class UserController {
       filename = `http://${req.rawHeaders[1]}/api/users/avatar/${req.file.filename}`
     }
 
+    const passwordHashed = await hash(password_hash, 16)
+
     const user = await userRepository.update(id, {
       username,
       name,
       email,
       avatar_url: filename,
-      password_hash,
+      password_hash: passwordHashed,
     })
 
     if (user.affected)
@@ -100,13 +105,12 @@ class UserController {
       })
 
     const userExist = userRepository.findOne({ id })
-    if (!userExist)
-      return res.status(400).json({ error: 'Usuario não encontrado' })
+    if (!userExist) return res.status(400).json({ error: 'Usuario não existe' })
 
     const user = await userRepository.delete(id)
 
     if (!user.affected) {
-      res.status(400).json({ error: 'Usuário não deletado!' })
+      res.status(400).json({ error: 'Erro ao deletar o usuário!' })
     } else {
       res.status(200).json({ error: 'Usuário deletado com sucesso' })
     }
