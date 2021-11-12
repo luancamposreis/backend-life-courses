@@ -8,7 +8,7 @@ class PermissionController {
     const permissionRepository = getCustomRepository(PermissionRepository)
     const { name, description } = req.body
 
-    const existPermission = permissionRepository.findOne({ name })
+    const existPermission = await permissionRepository.findOne({ name })
 
     if (existPermission)
       return res
@@ -22,7 +22,7 @@ class PermissionController {
 
     await permissionRepository.save(permission)
 
-    return res.json(permission)
+    return res.status(201).json(permission)
   }
 
   async index(req: Request, res: Response) {
