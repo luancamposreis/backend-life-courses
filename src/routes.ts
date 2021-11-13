@@ -8,7 +8,6 @@ import PermissionController from './controllers/PermissionController'
 import RoleController from './controllers/RoleController'
 import SessionController from './controllers/SessionController'
 import UserController from './controllers/UserController'
-import { is } from './middlewares/permission'
 
 const routes = Router()
 
@@ -56,7 +55,7 @@ routes.put(
   UserController.update
 )
 
-routes.get('/users', is(['ADMIN_ROLE']), UserController.index)
+routes.get('/users', UserController.index)
 
 routes.delete(
   '/users/:id',
