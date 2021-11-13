@@ -56,7 +56,7 @@ routes.put(
   UserController.update
 )
 
-routes.get('/users', UserController.index)
+routes.get('/users', is(['ADMIN_ROLE']), UserController.index)
 
 routes.delete(
   '/users/:id',

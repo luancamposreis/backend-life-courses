@@ -7,7 +7,7 @@ export default {
   username: process.env.USERNAME_DB,
   password: process.env.PASSWORD_DB,
   database: process.env.DATABASE_DB,
-  synchronize: true,
+  synchronize: false,
   logging: false,
   entities: ['src/database/entity/**/*.ts'],
   migrations: ['src/database/migration/**/*.ts'],
