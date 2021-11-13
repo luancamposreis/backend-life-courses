@@ -5,8 +5,22 @@ class Avatar {
   async show(req: Request, res: Response, next: NextFunction) {
     const { avatar } = req.params
 
-    const options = {
-      root: path.resolve(__dirname, '..', '..', 'public', 'uploads', 'users'),
+    let options
+    if (req.url === 'users') {
+      options = {
+        root: path.resolve(__dirname, '..', '..', 'public', 'uploads', 'users'),
+      }
+    } else {
+      options = {
+        root: path.resolve(
+          __dirname,
+          '..',
+          '..',
+          'public',
+          'uploads',
+          'modules_avatar'
+        ),
+      }
     }
 
     if (!avatar) {
