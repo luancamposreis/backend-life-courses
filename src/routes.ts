@@ -14,8 +14,8 @@ import UserController from './controllers/UserController'
 const routes = Router()
 
 // AvatarUrl
-routes.get('/users/avatar/:avatar', AvatarController.show)
-routes.get('/modules/avatar/:avatar', AvatarController.show)
+routes.get('/users/avatar/:avatar', AvatarController.showUser)
+routes.get('/modules/avatar/:avatar', AvatarController.showModule)
 
 // User Routes
 routes.post(
