@@ -8,6 +8,7 @@ import PermissionController from './controllers/PermissionController'
 import RoleController from './controllers/RoleController'
 import SessionController from './controllers/SessionController'
 import UserController from './controllers/UserController'
+import { is } from './middlewares/permission'
 
 const routes = Router()
 

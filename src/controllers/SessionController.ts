@@ -22,8 +22,10 @@ class SessionController {
     if (!matchPassword)
       return res.status(400).json({ error: 'Usuário ou senha incorreto!' })
 
+    const roles = user.roles.map((role) => role.name)
+
     const token = sign(
-      {},
+      { roles },
       '$2a$12$tpaCPI7Et0uH5yQS9h/SVuvxFnWZXYOtQ204ImcSy/PfJlDIHWvPC',
       { subject: user.id, expiresIn: '1d' }
     )
