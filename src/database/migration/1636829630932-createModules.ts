@@ -1,9 +1,4 @@
-import {
-  MigrationInterface,
-  QueryRunner,
-  Table,
-  TableForeignKey,
-} from 'typeorm'
+import { MigrationInterface, QueryRunner, Table } from 'typeorm'
 
 export class createModules1636829630932 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -36,10 +31,6 @@ export class createModules1636829630932 implements MigrationInterface {
             length: '255',
           },
           {
-            name: 'lesson_id',
-            type: 'uuid',
-          },
-          {
             name: 'created_at',
             type: 'timestamp',
             default: 'now()',
@@ -47,23 +38,9 @@ export class createModules1636829630932 implements MigrationInterface {
         ],
       })
     )
-
-    await queryRunner.createForeignKey(
-      'modules',
-      new TableForeignKey({
-        columnNames: ['lesson_id'],
-        referencedColumnNames: ['id'],
-        referencedTableName: 'lessons',
-        name: 'fk_modules_lessons_',
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE',
-      })
-    )
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropForeignKey('modules', 'fk_modules_lessons_')
-
     await queryRunner.dropTable('modules')
     await queryRunner.query('DROP EXTENSION "uuid-ossp"')
   }
