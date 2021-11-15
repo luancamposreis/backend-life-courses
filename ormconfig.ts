@@ -9,11 +9,11 @@ export default {
   database: process.env.DATABASE_DB,
   synchronize: true,
   logging: false,
-  entities: ['src/database/entity/**/*.ts'],
+  entities: ['src/database/entities/**/*.ts'],
   migrations: ['src/database/migration/**/*.ts'],
   subscribers: ['src/database/subscriber/**/*.ts'],
   cli: {
-    entitiesDir: 'src/database/entity',
+    entitiesDir: 'src/database/entities',
     migrationsDir: 'src/database/migration',
     subscribersDir: 'src/database/subscriber',
   },
