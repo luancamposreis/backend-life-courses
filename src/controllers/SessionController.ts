@@ -2,6 +2,7 @@ import { getCustomRepository } from 'typeorm'
 import { Request, Response } from 'express'
 import { compare } from 'bcryptjs'
 import { sign } from 'jsonwebtoken'
+import 'dotenv/config'
 
 import UserRepository from '../database/repositories/UserRepository'
 
@@ -24,11 +25,10 @@ class SessionController {
 
     const roles = user.roles.map((role) => role.name)
 
-    const token = sign(
-      { roles },
-      '$2a$12$tpaCPI7Et0uH5yQS9h/SVuvxFnWZXYOtQ204ImcSy/PfJlDIHWvPC',
-      { subject: user.id, expiresIn: '1d' }
-    )
+    const token = sign({ roles }, process.env.SECRET_JWT, {
+      subject: user.id,
+      expiresIn: '1d',
+    })
 
     delete user.password_hash
 

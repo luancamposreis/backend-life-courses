@@ -28,12 +28,9 @@ class UserController {
       return res.status(400).json({ error: errors.array()[0].msg })
 
     const UserExist = await userRepository.findOne({ username })
-    const EmailExist = await userRepository.findOne({ email })
 
     if (UserExist) {
       return res.status(400).json({ error: 'Usuário já existe!' })
-    } else if (EmailExist) {
-      return res.status(400).json({ error: 'Email já existe!' })
     }
 
     const passwordHashed = await hash(password_hash, 16)
