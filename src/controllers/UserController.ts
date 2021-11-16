@@ -48,6 +48,10 @@ class UserController {
   async index(req: Request, res: Response) {
     const user = await UserRepository().find()
 
+    user.forEach((element) => {
+      delete element.password_hash
+    })
+
     return res.json(user)
   }
 

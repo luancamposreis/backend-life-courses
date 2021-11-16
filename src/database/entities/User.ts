@@ -29,7 +29,7 @@ export class User extends BaseEntity {
   })
   roles: Role[]
 
-  @ManyToMany(() => Role)
+  @ManyToMany(() => Permission)
   @JoinTable({
     name: 'users_permissions',
     joinColumns: [{ name: 'user_id' }],

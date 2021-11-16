@@ -24,6 +24,7 @@ Durante o desenvolvimento, foi utilizando o `NodeJS` v16.13.0, `Express`, ORM `T
 - [BCrypt](https://npmjs.com/package/bcrypt)
 - [Instalando o Docker](https://docs.docker.com/get-docker/)
 - [Instalando o Docker Compose](https://docs.docker.com/compose/install/)
+- [Rocketseat](https://www.youtube.com/watch?v=AUY2AUAmT44)
 
 ## 👍🏻 Como baixar
 

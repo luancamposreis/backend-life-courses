@@ -1,31 +1,23 @@
 import { Request, Response } from 'express'
+import { CreateUserAccessControlListService } from '../services/UserAcessControlListService'
 
-import {
-  PermissionRepository,
-  RoleRepository,
-  UserRepository,
-} from '../database/repositories'
+export class CreateUserAccessControlListController {
+  async handle(request: Request, response: Response) {
+    const { permissions, roles } = request.body
+    const { userId } = request
 
-export class UserAcessControlController {
-  async store(req: Request, res: Response) {
-    const { permissions, roles } = req.body
-    const { userId } = req
+    const createUserACLService = new CreateUserAccessControlListService()
 
-    const user = await UserRepository().findOne(userId)
+    const result = await createUserACLService.execute({
+      userId,
+      permissions,
+      roles,
+    })
 
-    if (!user) return res.status(400).json({ error: 'Usuário não existe!' })
+    if (result instanceof Error) {
+      return response.status(400).json(result.message)
+    }
 
-    const permissionsExists = await PermissionRepository().findByIds(
-      permissions
-    )
-
-    const roleExists = await RoleRepository().findByIds(roles)
-
-    user.permissions = permissionsExists
-    user.roles = roleExists
-
-    await UserRepository().save(user)
-
-    return user
+    return response.json(result)
   }
 }

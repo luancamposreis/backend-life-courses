@@ -7,16 +7,20 @@ import AvatarController from './controllers/AvatarController'
 import PermissionController from './controllers/PermissionController'
 import RoleController from './controllers/RoleController'
 import RolePermissionController from './controllers/RolePermissionController'
-import { UserAcessControlController } from './controllers/UserAcessControlController'
+import { CreateUserAccessControlListController } from './controllers/UserAcessControlController'
 import UserController from './controllers/UserController'
+import SessionController from './controllers/SessionController'
 import { ensureAuthenticated } from './middlewares/ensureAuthenticated'
 import { can, is } from './middlewares/permissions'
+import LessonController from './controllers/LessonController'
+import ModuleController from './controllers/ModuleController'
 
 const routes = Router()
 
 // AvatarUrl
 routes.get('/users/avatar/:avatar', AvatarController.showUser)
 routes.get('/modules/avatar/:avatar', AvatarController.showModule)
+routes.post('/login', SessionController.createSession)
 
 // User Routes
 routes.post(
@@ -56,22 +60,35 @@ routes.put(
   body('password_hash')
     .isLength({ min: 8 })
     .withMessage('A senha deve conter conter no mínimo 8 digitos!'),
+  ensureAuthenticated(),
   UserController.update
 )
 
-routes.get('/users', UserController.index)
+routes.get('/users', ensureAuthenticated(), is(['ADMIN']), UserController.index)
+
+routes.post(
+  '/users/acl',
+  ensureAuthenticated(),
+  is(['ADMIN']),
+  can(['CREATE_PERMISSION', 'VIEW_PERMISSION']),
+  new CreateUserAccessControlListController().handle
+)
 
 routes.delete(
   '/users/:id',
   param('id').isUUID().withMessage('Usuário não encontrado!'),
+  ensureAuthenticated(),
   UserController.delete
 )
 
-// Session Routes
-routes.post('/sessions', SessionController.createSession)
-
 // Permission Routes
-routes.get('/permissions', PermissionController.index)
+routes.get(
+  '/permissions',
+  ensureAuthenticated(),
+  is(['ADMIN']),
+  can(['VIEW_PERMISSION']),
+  PermissionController.index
+)
 routes.post(
   '/permissions',
   body('name')
@@ -81,11 +98,20 @@ routes.post(
   body('description')
     .isLength({ min: 4 })
     .withMessage('Descrição da permissão deve conter no minímo 4 caractere'),
+  ensureAuthenticated(),
+  is(['ADMIN']),
+  can(['CREATE_PERMISSION', 'VIEW_PERMISSION']),
   PermissionController.store
 )
 
 // Role Routes
-routes.get('/roles', RoleController.index)
+routes.get(
+  '/roles',
+  ensureAuthenticated(),
+  is(['ADMIN']),
+  can(['VIEW_PERMISSION']),
+  RoleController.index
+)
 routes.post(
   '/roles',
   body('name')
@@ -95,15 +121,19 @@ routes.post(
   body('description')
     .isLength({ min: 4 })
     .withMessage('Descrição da role deve conter no minímo 4 caractere'),
-  body('permissions')
-    .isArray()
-    .isUUID()
-    .withMessage('Permissões não encontrada!'),
+  ensureAuthenticated(),
+  is(['ADMIN']),
+  can(['CREATE_PERMISSION', 'VIEW_PERMISSION']),
   RoleController.store
 )
 
-// Permission Routes
-routes.get('/lessons', LessonController.index)
+// Lesson Routes
+routes.get(
+  '/lessons',
+  ensureAuthenticated(),
+  is(['ADMIN', 'USER']),
+  LessonController.index
+)
 routes.post(
   '/:id/lessons',
   body('name')
@@ -115,11 +145,24 @@ routes.post(
     .withMessage('Descrição da lição deve conter no minímo 4 caractere!'),
   body('lesson_url').isURL().withMessage('Url inválida!'),
   param('id').isUUID().withMessage('Módulo invalido!'),
+  ensureAuthenticated(),
+  is(['ADMIN']),
+  can([
+    'CREATE_PERMISSION',
+    'VIEW_PERMISSION',
+    'UPDATE_PERMISSION',
+    'DELETE_PERMISSION',
+  ]),
   LessonController.store
 )
 
 // Module Routes
-routes.get('/modules', ModuleController.index)
+routes.get(
+  '/modules',
+  ensureAuthenticated(),
+  is(['ADMIN', 'USER']),
+  ModuleController.index
+)
 routes.post(
   '/modules',
   multer(moduleMulterConfig).single('avatar_url'),
@@ -130,7 +173,28 @@ routes.post(
   body('description')
     .isLength({ min: 4 })
     .withMessage('Descrição da lição deve conter no minímo 4 caractere!'),
+  ensureAuthenticated(),
+  is(['ADMIN']),
+  can([
+    'CREATE_PERMISSION',
+    'VIEW_PERMISSION',
+    'UPDATE_PERMISSION',
+    'DELETE_PERMISSION',
+  ]),
   ModuleController.store
+)
+
+routes.post(
+  '/roles/:roleId',
+  ensureAuthenticated(),
+  is(['ADMIN']),
+  can([
+    'CREATE_PERMISSION',
+    'VIEW_PERMISSION',
+    'UPDATE_PERMISSION',
+    'DELETE_PERMISSION',
+  ]),
+  RolePermissionController.store
 )
 
 export default routes

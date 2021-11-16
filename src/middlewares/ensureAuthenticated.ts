@@ -5,7 +5,8 @@ export const ensureAuthenticated = () => {
   return async (req: Request, res: Response, next: NextFunction) => {
     const authHeaders = req.headers.authorization
 
-    if (!authHeaders) return res.status(400).json({ error: 'token is missing' })
+    if (!authHeaders)
+      return res.status(400).json({ error: 'Você não está autenticado!' })
 
     const [, token] = authHeaders.split(' ')
 
