@@ -1,6 +1,6 @@
 import { Factory, Seeder } from 'typeorm-seeding'
 import { Connection } from 'typeorm'
-import { Permission } from './../entity/Permission'
+import { Permission } from '../entities/Permission'
 
 export default class CreateUsers implements Seeder {
   public async run(factory: Factory, connection: Connection): Promise<any> {
@@ -10,20 +10,20 @@ export default class CreateUsers implements Seeder {
       .into(Permission)
       .values([
         {
-          name: 'view_permission',
-          description: 'Permission to View',
+          name: 'VIEW_PERMISSION',
+          description: 'Permission to view',
         },
         {
-          name: 'create_permission',
-          description: 'Permission to Create',
+          name: 'CREATE_PERMISSION',
+          description: 'Permission to create',
         },
         {
-          name: 'update_permission',
-          description: 'Permission to Update',
+          name: 'UPDATE_PERMISSION',
+          description: 'Permission to update',
         },
         {
-          name: 'delete_permission',
-          description: 'Permission to Delete',
+          name: 'DELETE_PERMISSION',
+          description: 'Permission to delete',
         },
       ])
       .execute()

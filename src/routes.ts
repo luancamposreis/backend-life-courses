@@ -39,7 +39,6 @@ routes.post(
   body('password_hash')
     .isLength({ min: 8 })
     .withMessage('A senha deve conter conter no mínimo 8 digitos!'),
-  body('roles').isUUID().withMessage('Role inválida!'),
   UserController.store
 )
 
@@ -70,7 +69,7 @@ routes.post(
   '/users/acl',
   ensureAuthenticated(),
   is(['ADMIN']),
-  can(['CREATE_PERMISSION', 'VIEW_PERMISSION']),
+  // can(['CREATE_PERMISSION', 'VIEW_PERMISSION']),
   new CreateUserAccessControlListController().handle
 )
 
@@ -100,7 +99,6 @@ routes.post(
     .withMessage('Descrição da permissão deve conter no minímo 4 caractere'),
   ensureAuthenticated(),
   is(['ADMIN']),
-  can(['CREATE_PERMISSION', 'VIEW_PERMISSION']),
   PermissionController.store
 )
 
@@ -128,12 +126,7 @@ routes.post(
 )
 
 // Lesson Routes
-routes.get(
-  '/lessons',
-  ensureAuthenticated(),
-  is(['ADMIN', 'USER']),
-  LessonController.index
-)
+routes.get('/lessons', ensureAuthenticated(), LessonController.index)
 routes.post(
   '/:id/lessons',
   body('name')
@@ -157,12 +150,7 @@ routes.post(
 )
 
 // Module Routes
-routes.get(
-  '/modules',
-  ensureAuthenticated(),
-  is(['ADMIN', 'USER']),
-  ModuleController.index
-)
+routes.get('/modules', ensureAuthenticated(), ModuleController.index)
 routes.post(
   '/modules',
   multer(moduleMulterConfig).single('avatar_url'),
@@ -182,6 +170,19 @@ routes.post(
     'DELETE_PERMISSION',
   ]),
   ModuleController.store
+)
+routes.put(
+  '/modules/:id',
+  multer(moduleMulterConfig).single('avatar_url'),
+  param('id').isUUID().withMessage('Usuário não encontrado!'),
+  body('name')
+    .isLength({ min: 4 })
+    .withMessage('O nome deve conter no minímo 4 caractere!'),
+  body('description')
+    .isLength({ min: 4 })
+    .withMessage('A descrição deve conter no minímo 4 caractere!'),
+  ensureAuthenticated(),
+  ModuleController.update
 )
 
 routes.post(

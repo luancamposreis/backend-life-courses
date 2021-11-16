@@ -38,7 +38,9 @@ class LessonController {
   }
 
   async index(req: Request, res: Response) {
-    const lessons = await LessonRepository().find({ relations: ['module'] })
+    const lessons = await LessonRepository().find({
+      relations: ['module'],
+    })
 
     res.json(lessons)
   }
