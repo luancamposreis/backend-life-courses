@@ -12,9 +12,11 @@ export default {
   entities: ['src/database/entities/**/*.ts'],
   migrations: ['src/database/migration/**/*.ts'],
   subscribers: ['src/database/subscriber/**/*.ts'],
+  seeds: ['src/database/seeders/**/*.ts'],
   cli: {
     entitiesDir: 'src/database/entities',
     migrationsDir: 'src/database/migration',
     subscribersDir: 'src/database/subscriber',
+    seeds: 'src/database/seeders/',
   },
 }
