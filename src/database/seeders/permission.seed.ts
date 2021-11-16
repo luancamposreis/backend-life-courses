@@ -3,7 +3,7 @@ import { Connection } from 'typeorm'
 import { Permission } from '../entities/Permission'
 import { v4 as uuid } from 'uuid'
 
-export default class CreateUsers implements Seeder {
+export default class CreatePermission implements Seeder {
   public async run(factory: Factory, connection: Connection): Promise<any> {
     await connection
       .createQueryBuilder()
