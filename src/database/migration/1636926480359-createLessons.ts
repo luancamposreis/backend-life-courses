@@ -49,13 +49,13 @@ export class createLessons1636926480359 implements MigrationInterface {
     )
 
     await queryRunner.createForeignKey(
-      'modules',
+      'lessons',
       new TableForeignKey({
         columnNames: ['module_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'modules',
         name: 'fk_lessons_modules_',
-        onDelete: 'CASCADE',
+        onDelete: 'RESTRICT',
         onUpdate: 'CASCADE',
       })
     )
