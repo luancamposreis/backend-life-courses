@@ -1,14 +1,12 @@
 import { Request, Response } from 'express'
 import { validationResult } from 'express-validator'
-import { getCustomRepository } from 'typeorm'
 
-import ModuleRepository from '../database/repositories/ModuleRepository'
+import { ModuleRepository } from '../database/repositories'
 
 let errors
 
 class PermissionController {
   async store(req: Request, res: Response) {
-    const moduleRepository = getCustomRepository(ModuleRepository)
     const { name, description } = req.body
 
     let filename
@@ -23,28 +21,26 @@ class PermissionController {
     if (!errors.isEmpty())
       return res.status(400).json({ error: errors.array()[0].msg })
 
-    const existModule = await moduleRepository.findOne({ name })
+    const existModule = await ModuleRepository().findOne({ name })
 
     if (existModule)
       return res
         .status(400)
         .json({ error: 'Já existe um modulo com este nome!' })
 
-    const module = moduleRepository.create({
+    const module = ModuleRepository().create({
       name,
       description,
       avatar_url: filename,
     })
 
-    await moduleRepository.save(module)
+    await ModuleRepository().save(module)
 
     return res.status(201).json(module)
   }
 
   async index(req: Request, res: Response) {
-    const moduleRepository = getCustomRepository(ModuleRepository)
-
-    const modules = await moduleRepository.find()
+    const modules = await ModuleRepository().find()
 
     res.json(modules)
   }

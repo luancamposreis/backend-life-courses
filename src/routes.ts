@@ -4,12 +4,13 @@ import multer from 'multer'
 
 import { moduleMulterConfig, multerConfig } from './config/multerConfig'
 import AvatarController from './controllers/AvatarController'
-import LessonController from './controllers/LessonController'
-import ModuleController from './controllers/ModuleController'
 import PermissionController from './controllers/PermissionController'
 import RoleController from './controllers/RoleController'
-import SessionController from './controllers/SessionController'
+import RolePermissionController from './controllers/RolePermissionController'
+import { UserAcessControlController } from './controllers/UserAcessControlController'
 import UserController from './controllers/UserController'
+import { ensureAuthenticated } from './middlewares/ensureAuthenticated'
+import { can, is } from './middlewares/permissions'
 
 const routes = Router()
 

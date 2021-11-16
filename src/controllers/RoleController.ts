@@ -1,48 +1,33 @@
 import { Request, Response } from 'express'
 import { validationResult } from 'express-validator'
-import { getCustomRepository } from 'typeorm'
 
-import PermissionRepository from '../database/repositories/PermissionRepository'
-import RoleRepository from '../database/repositories/RoleRepository'
+import { RoleRepository } from '../database/repositories'
 
 let errors
 
 class RoleController {
   async store(req: Request, res: Response) {
-    const roleRepository = getCustomRepository(RoleRepository)
-    const permissionRepository = getCustomRepository(PermissionRepository)
-
-    const { name, description, permissions } = req.body
+    const { name, description } = req.body
 
     errors = validationResult(req)
     if (!errors.isEmpty())
       return res.status(400).json({ error: errors.array()[0].msg })
 
-    const existRole = await roleRepository.findOne({ name })
-
-    if (existRole)
+    if (await RoleRepository().findOne({ name }))
       return res.status(400).json({ error: 'Já existe role com este nome!' })
 
-    const existPermission = await permissionRepository.findByIds(permissions)
-
-    if (!existPermission)
-      return res.status(400).json({ error: 'Não foi encontrados permissões!' })
-
-    const role = roleRepository.create({
+    const role = RoleRepository().create({
       name,
       description,
-      permissions: existPermission,
     })
 
-    await roleRepository.save(role)
+    await RoleRepository().save(role)
 
     return res.status(201).json(role)
   }
 
   async index(req: Request, res: Response) {
-    const roleRepository = getCustomRepository(RoleRepository)
-
-    const roles = await roleRepository.find()
+    const roles = await RoleRepository().find()
 
     return res.json(roles)
   }
