@@ -125,8 +125,22 @@ routes.post(
   RoleController.store
 )
 
+routes.post(
+  '/roles/:roleId',
+  ensureAuthenticated(),
+  is(['ADMIN']),
+  can([
+    'CREATE_PERMISSION',
+    'VIEW_PERMISSION',
+    'UPDATE_PERMISSION',
+    'DELETE_PERMISSION',
+  ]),
+  RolePermissionController.store
+)
+
 // Lesson Routes
 routes.get('/lessons', ensureAuthenticated(), LessonController.index)
+routes.get('/lessons/:id', ensureAuthenticated(), LessonController.show)
 routes.post(
   '/:id/lessons',
   body('name')
@@ -148,19 +162,47 @@ routes.post(
   ]),
   LessonController.store
 )
+routes.put(
+  '/lessons/:id',
+  param('id').isUUID().withMessage('Aula não encontrado!'),
+  body('name')
+    .isLength({ min: 2 })
+    .withMessage('O nome deve conter no minímo 2 caractere!'),
+  body('description')
+    .isLength({ min: 4 })
+    .withMessage('A descrição deve conter no minímo 4 caractere!'),
+  body('lesson_url').isURL().withMessage('Url inválida!'),
+  ensureAuthenticated(),
+  is(['ADMIN']),
+  can([
+    'CREATE_PERMISSION',
+    'VIEW_PERMISSION',
+    'UPDATE_PERMISSION',
+    'DELETE_PERMISSION',
+  ]),
+  LessonController.update
+)
+routes.delete(
+  '/lessons/:id',
+  param('id').isUUID().withMessage('Aula não encontrado!'),
+  ensureAuthenticated(),
+  is(['ADMIN']),
+  LessonController.delete
+)
 
 // Module Routes
 routes.get('/modules', ensureAuthenticated(), ModuleController.index)
+routes.get('/modules/:id', ensureAuthenticated(), ModuleController.show)
 routes.post(
   '/modules',
   multer(moduleMulterConfig).single('avatar_url'),
   body('name')
     .isLength({ min: 4 })
     .toUpperCase()
-    .withMessage('Nome da lição deve conter no minímo 4 caractere!'),
+    .withMessage('Nome do módulo deve conter no minímo 4 caractere!'),
   body('description')
     .isLength({ min: 4 })
-    .withMessage('Descrição da lição deve conter no minímo 4 caractere!'),
+    .withMessage('Descrição do módulo deve conter no minímo 4 caractere!'),
   ensureAuthenticated(),
   is(['ADMIN']),
   can([
@@ -174,19 +216,13 @@ routes.post(
 routes.put(
   '/modules/:id',
   multer(moduleMulterConfig).single('avatar_url'),
-  param('id').isUUID().withMessage('Usuário não encontrado!'),
+  param('id').isUUID().withMessage('Módulo não encontrado!'),
   body('name')
     .isLength({ min: 4 })
     .withMessage('O nome deve conter no minímo 4 caractere!'),
   body('description')
     .isLength({ min: 4 })
     .withMessage('A descrição deve conter no minímo 4 caractere!'),
-  ensureAuthenticated(),
-  ModuleController.update
-)
-
-routes.post(
-  '/roles/:roleId',
   ensureAuthenticated(),
   is(['ADMIN']),
   can([
@@ -195,7 +231,14 @@ routes.post(
     'UPDATE_PERMISSION',
     'DELETE_PERMISSION',
   ]),
-  RolePermissionController.store
+  ModuleController.update
+)
+routes.delete(
+  '/modules/:id',
+  param('id').isUUID().withMessage('Módulo não encontrado!'),
+  ensureAuthenticated(),
+  is(['ADMIN']),
+  ModuleController.delete
 )
 
 export default routes

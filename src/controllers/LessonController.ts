@@ -37,12 +37,66 @@ class LessonController {
     return res.status(201).json(lesson)
   }
 
+  async show(req: Request, res: Response) {
+    const { id } = req.params
+    const lessons = await LessonRepository().findOne({ id })
+
+    res.json(lessons)
+  }
+
   async index(req: Request, res: Response) {
     const lessons = await LessonRepository().find({
       relations: ['module'],
     })
 
     res.json(lessons)
+  }
+
+  async update(req: Request, res: Response) {
+    const { id } = req.params
+    const { name, description, lesson_url } = req.body
+
+    errors = validationResult(req)
+    if (!errors.isEmpty())
+      return res.status(400).json({
+        error: errors.array()[0].msg,
+      })
+
+    const lessonExist = await LessonRepository().findOne({ id })
+    if (!lessonExist) return res.status(400).json({ error: 'Aula não existe!' })
+
+    const lesson = await LessonRepository().update(id, {
+      name,
+      description,
+      lesson_url,
+    })
+
+    if (lesson.affected) {
+      return res.json({ message: 'Aula atualizado com sucesso!' })
+    } else {
+      return res.status(304).json({ error: 'Erro ao atualizar a aula!' })
+    }
+  }
+
+  async delete(req: Request, res: Response) {
+    const { id } = req.params
+
+    errors = validationResult(req)
+    if (!errors.isEmpty())
+      return res.status(400).json({
+        error: errors.array()[0].msg,
+      })
+
+    const lessonExist = LessonRepository().findOne({ id })
+    if (!lessonExist) return res.status(400).json({ error: 'Aula não existe' })
+
+    const lesson = await LessonRepository().delete(id)
+
+    if (!lesson.affected) {
+      res.status(304).json({ error: 'Erro ao deletar o aula!' })
+    } else {
+      res.status(200).json({ error: 'Aula deletado com sucesso' })
+    }
   }
 }
 

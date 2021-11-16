@@ -39,6 +39,13 @@ class PermissionController {
     return res.status(201).json(module)
   }
 
+  async show(req: Request, res: Response) {
+    const { id } = req.params
+    const modules = await ModuleRepository().findOne({ id })
+
+    res.json(modules)
+  }
+
   async index(req: Request, res: Response) {
     const modules = await ModuleRepository().find()
 
@@ -77,6 +84,28 @@ class PermissionController {
       return res.json({ message: 'Módulo atualizado com sucesso!' })
     } else {
       return res.json({ error: 'Erro ao atualizar o módulo!' })
+    }
+  }
+
+  async delete(req: Request, res: Response) {
+    const { id } = req.params
+
+    errors = validationResult(req)
+    if (!errors.isEmpty())
+      return res.status(400).json({
+        error: errors.array()[0].msg,
+      })
+
+    const moduleExist = ModuleRepository().findOne({ id })
+    if (!moduleExist)
+      return res.status(400).json({ error: 'Módulo não existe' })
+
+    const modules = await ModuleRepository().delete(id)
+
+    if (!modules.affected) {
+      res.status(400).json({ error: 'Erro ao deletar o módulo!' })
+    } else {
+      res.status(200).json({ error: 'Módulo deletado com sucesso' })
     }
   }
 }
