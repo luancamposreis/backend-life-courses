@@ -69,7 +69,7 @@ routes.post(
   '/users/acl',
   ensureAuthenticated(),
   is(['ADMIN']),
-  // can(['CREATE_PERMISSION', 'VIEW_PERMISSION']),
+  can(['CREATE_PERMISSION', 'VIEW_PERMISSION']),
   new CreateUserAccessControlListController().handle
 )
 
@@ -84,8 +84,8 @@ routes.delete(
 routes.get(
   '/permissions',
   ensureAuthenticated(),
-  // is(['ADMIN']),
-  // can(['VIEW_PERMISSION']),
+  is(['ADMIN']),
+  can(['VIEW_PERMISSION']),
   PermissionController.index
 )
 routes.post(
@@ -106,8 +106,8 @@ routes.post(
 routes.get(
   '/roles',
   ensureAuthenticated(),
-  // is(['ADMIN']),
-  // can(['VIEW_PERMISSION']),
+  is(['ADMIN']),
+  can(['VIEW_PERMISSION']),
   RoleController.index
 )
 routes.post(
