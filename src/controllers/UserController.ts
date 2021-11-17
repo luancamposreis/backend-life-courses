@@ -2,13 +2,13 @@ import { Request, Response } from 'express'
 import { validationResult } from 'express-validator'
 import { hash } from 'bcryptjs'
 
-import { UserRepository } from '../database/repositories'
+import { RoleRepository, UserRepository } from '../database/repositories'
 
 let errors
 
 class UserController {
   async store(req: Request, res: Response) {
-    const { username, name, email, password_hash } = req.body
+    const { username, name, email, password_hash, roles } = req.body
 
     let filename
 
@@ -32,12 +32,15 @@ class UserController {
 
     const passwordHashed = await hash(password_hash, 16)
 
+    const roleExist = await RoleRepository().findByIds(roles)
+
     const user = UserRepository().create({
       username,
       name,
       email,
       avatar_url: filename,
       password_hash: passwordHashed,
+      roles: roleExist,
     })
 
     await UserRepository().save(user)
@@ -57,7 +60,7 @@ class UserController {
 
   async update(req: Request, res: Response) {
     const { id } = req.params
-    const { username, name, email, password_hash } = req.body
+    const { username, name, email, password_hash, roles } = req.body
 
     errors = validationResult(req)
     if (!errors.isEmpty())
@@ -79,12 +82,20 @@ class UserController {
 
     const passwordHashed = await hash(password_hash, 16)
 
+    let roleExist
+    if (roles === undefined) {
+      roleExist = userExist.roles
+    } else {
+      roleExist = roles
+    }
+
     const user = await UserRepository().update(id, {
       username,
       name,
       email,
       avatar_url: filename,
       password_hash: passwordHashed,
+      roles: roleExist,
     })
 
     if (user.affected)

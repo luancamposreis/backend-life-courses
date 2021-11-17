@@ -11,6 +11,7 @@ class SessionController {
 
     const user = await UserRepository().findOne({
       where: [{ username }, { email }],
+      relations: ['roles'],
     })
 
     if (!user) return res.status(400).json({ error: 'Usuário não existe!' })

@@ -41,13 +41,15 @@ class PermissionController {
 
   async show(req: Request, res: Response) {
     const { id } = req.params
-    const modules = await ModuleRepository().findOne({ id })
+    const modules = await ModuleRepository().findOne(id, {
+      relations: ['lesson'],
+    })
 
     res.json(modules)
   }
 
   async index(req: Request, res: Response) {
-    const modules = await ModuleRepository().find({ relations: ['lesson'] })
+    const modules = await ModuleRepository().find()
 
     res.json(modules)
   }

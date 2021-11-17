@@ -6,12 +6,10 @@ import { moduleMulterConfig, multerConfig } from './config/multerConfig'
 import AvatarController from './controllers/AvatarController'
 import PermissionController from './controllers/PermissionController'
 import RoleController from './controllers/RoleController'
-import RolePermissionController from './controllers/RolePermissionController'
-import { CreateUserAccessControlListController } from './controllers/UserAcessControlController'
 import UserController from './controllers/UserController'
 import SessionController from './controllers/SessionController'
 import { ensureAuthenticated } from './middlewares/ensureAuthenticated'
-import { can, is } from './middlewares/permissions'
+import { is } from './middlewares/permissions'
 import LessonController from './controllers/LessonController'
 import ModuleController from './controllers/ModuleController'
 
@@ -39,6 +37,9 @@ routes.post(
   body('password_hash')
     .isLength({ min: 8 })
     .withMessage('A senha deve conter conter no mínimo 8 digitos!'),
+  body('roles')
+    .isLength({ min: 4 })
+    .withMessage('A role deve conter conter no mínimo 4 digitos!'),
   UserController.store
 )
 
@@ -60,23 +61,17 @@ routes.put(
     .isLength({ min: 8 })
     .withMessage('A senha deve conter conter no mínimo 8 digitos!'),
   ensureAuthenticated(),
+  is(['ADMIN', 'USER']),
   UserController.update
 )
 
 routes.get('/users', ensureAuthenticated(), is(['ADMIN']), UserController.index)
 
-routes.post(
-  '/users/acl',
-  ensureAuthenticated(),
-  // is(['ADMIN']),
-  // can(['CREATE_PERMISSION', 'VIEW_PERMISSION']),
-  new CreateUserAccessControlListController().handle
-)
-
 routes.delete(
   '/users/:id',
   param('id').isUUID().withMessage('Usuário não encontrado!'),
   ensureAuthenticated(),
+  is(['ADMIN', 'USER']),
   UserController.delete
 )
 
@@ -84,8 +79,7 @@ routes.delete(
 routes.get(
   '/permissions',
   ensureAuthenticated(),
-  // is(['ADMIN']),
-  // can(['VIEW_PERMISSION']),
+  is(['ADMIN']),
   PermissionController.index
 )
 routes.post(
@@ -103,13 +97,7 @@ routes.post(
 )
 
 // Role Routes
-routes.get(
-  '/roles',
-  ensureAuthenticated(),
-  // is(['ADMIN']),
-  // can(['VIEW_PERMISSION']),
-  RoleController.index
-)
+routes.get('/roles', ensureAuthenticated(), is(['ADMIN']), RoleController.index)
 routes.post(
   '/roles',
   body('name')
@@ -119,23 +107,12 @@ routes.post(
   body('description')
     .isLength({ min: 4 })
     .withMessage('Descrição da role deve conter no minímo 4 caractere'),
+  body('permissions')
+    .isLength({ min: 4 })
+    .withMessage('Permissão da role deve conter no minímo 4 caractere'),
   ensureAuthenticated(),
   is(['ADMIN']),
-  can(['CREATE_PERMISSION', 'VIEW_PERMISSION']),
   RoleController.store
-)
-
-routes.post(
-  '/roles/:roleId',
-  ensureAuthenticated(),
-  is(['ADMIN']),
-  can([
-    'CREATE_PERMISSION',
-    'VIEW_PERMISSION',
-    'UPDATE_PERMISSION',
-    'DELETE_PERMISSION',
-  ]),
-  RolePermissionController.store
 )
 
 // Lesson Routes
@@ -154,12 +131,6 @@ routes.post(
   param('id').isUUID().withMessage('Módulo invalido!'),
   ensureAuthenticated(),
   is(['ADMIN']),
-  can([
-    'CREATE_PERMISSION',
-    'VIEW_PERMISSION',
-    'UPDATE_PERMISSION',
-    'DELETE_PERMISSION',
-  ]),
   LessonController.store
 )
 routes.put(
@@ -174,12 +145,6 @@ routes.put(
   body('lesson_url').isURL().withMessage('Url inválida!'),
   ensureAuthenticated(),
   is(['ADMIN']),
-  can([
-    'CREATE_PERMISSION',
-    'VIEW_PERMISSION',
-    'UPDATE_PERMISSION',
-    'DELETE_PERMISSION',
-  ]),
   LessonController.update
 )
 routes.delete(
@@ -205,12 +170,6 @@ routes.post(
     .withMessage('Descrição do módulo deve conter no minímo 4 caractere!'),
   ensureAuthenticated(),
   is(['ADMIN']),
-  can([
-    'CREATE_PERMISSION',
-    'VIEW_PERMISSION',
-    'UPDATE_PERMISSION',
-    'DELETE_PERMISSION',
-  ]),
   ModuleController.store
 )
 routes.put(
@@ -225,12 +184,6 @@ routes.put(
     .withMessage('A descrição deve conter no minímo 4 caractere!'),
   ensureAuthenticated(),
   is(['ADMIN']),
-  can([
-    'CREATE_PERMISSION',
-    'VIEW_PERMISSION',
-    'UPDATE_PERMISSION',
-    'DELETE_PERMISSION',
-  ]),
   ModuleController.update
 )
 routes.delete(

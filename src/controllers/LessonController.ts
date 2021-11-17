@@ -21,15 +21,10 @@ class LessonController {
         .status(400)
         .json({ error: 'Já existe uma aula com este nome!' })
 
-    const existModule = await ModuleRepository().findOne({ where: { id } })
-    if (!existModule)
-      return res.status(400).json({ error: 'O moduo não existe!' })
-
     const lesson = LessonRepository().create({
       name,
       description,
       lesson_url,
-      module: existModule,
     })
 
     await LessonRepository().save(lesson)
@@ -45,9 +40,7 @@ class LessonController {
   }
 
   async index(req: Request, res: Response) {
-    const lessons = await LessonRepository().find({
-      relations: ['module'],
-    })
+    const lessons = await LessonRepository().find()
 
     res.json(lessons)
   }

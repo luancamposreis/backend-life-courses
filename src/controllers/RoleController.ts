@@ -1,13 +1,13 @@
 import { Request, Response } from 'express'
 import { validationResult } from 'express-validator'
 
-import { RoleRepository } from '../database/repositories'
+import { PermissionRepository, RoleRepository } from '../database/repositories'
 
 let errors
 
 class RoleController {
   async store(req: Request, res: Response) {
-    const { name, description } = req.body
+    const { name, description, permissions } = req.body
 
     errors = validationResult(req)
     if (!errors.isEmpty())
@@ -16,9 +16,14 @@ class RoleController {
     if (await RoleRepository().findOne({ name }))
       return res.status(400).json({ error: 'Já existe role com este nome!' })
 
+    const permissionsExist = await PermissionRepository().findByIds(permissions)
+    if (!permissionsExist)
+      return res.status(400).json({ error: 'Permissão não existe!' })
+
     const role = RoleRepository().create({
       name,
       description,
+      permissions: permissionsExist,
     })
 
     await RoleRepository().save(role)
