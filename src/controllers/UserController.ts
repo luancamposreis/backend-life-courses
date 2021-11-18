@@ -60,7 +60,7 @@ class UserController {
 
   async update(req: Request, res: Response) {
     const { id } = req.params
-    const { username, name, email, password_hash, roles } = req.body
+    const { username, name, email, password_hash } = req.body
 
     errors = validationResult(req)
     if (!errors.isEmpty())
@@ -82,20 +82,12 @@ class UserController {
 
     const passwordHashed = await hash(password_hash, 16)
 
-    let roleExist
-    if (roles === undefined) {
-      roleExist = userExist.roles
-    } else {
-      roleExist = roles
-    }
-
     const user = await UserRepository().update(id, {
       username,
       name,
       email,
       avatar_url: filename,
       password_hash: passwordHashed,
-      roles: roleExist,
     })
 
     if (user.affected)

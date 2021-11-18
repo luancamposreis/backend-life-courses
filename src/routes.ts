@@ -37,9 +37,6 @@ routes.post(
   body('password_hash')
     .isLength({ min: 8 })
     .withMessage('A senha deve conter conter no mínimo 8 digitos!'),
-  body('roles')
-    .isLength({ min: 4 })
-    .withMessage('A role deve conter conter no mínimo 4 digitos!'),
   UserController.store
 )
 
