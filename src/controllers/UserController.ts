@@ -32,7 +32,12 @@ class UserController {
 
     const passwordHashed = await hash(password_hash, 16)
 
-    const roleExist = await RoleRepository().findByIds(roles)
+    let existRoles
+    if (roles === undefined) {
+      existRoles = await RoleRepository().find({ where: { name: 'USER' } })
+    } else {
+      existRoles = await RoleRepository().findByIds(roles)
+    }
 
     const user = UserRepository().create({
       username,
@@ -40,7 +45,7 @@ class UserController {
       email,
       avatar_url: filename,
       password_hash: passwordHashed,
-      roles: roleExist,
+      roles: existRoles,
     })
 
     await UserRepository().save(user)
