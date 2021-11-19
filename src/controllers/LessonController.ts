@@ -1,14 +1,13 @@
 import { Request, Response } from 'express'
 import { validationResult } from 'express-validator'
 
-import { ModuleRepository, LessonRepository } from '../database/repositories/'
+import { LessonRepository } from '../database/repositories/'
 
 let errors
 
 class LessonController {
   async store(req: Request, res: Response) {
     const { name, description, lesson_url } = req.body
-    const { id } = req.params
 
     errors = validationResult(req)
     if (!errors.isEmpty())
@@ -25,6 +24,7 @@ class LessonController {
       name,
       description,
       lesson_url,
+      modules: req.params,
     })
 
     await LessonRepository().save(lesson)

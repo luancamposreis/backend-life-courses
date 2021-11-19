@@ -1,11 +1,11 @@
 import { Request, Response } from 'express'
 import { validationResult } from 'express-validator'
 
-import { ModuleRepository } from '../database/repositories'
+import { LessonRepository, ModuleRepository } from '../database/repositories'
 
 let errors
 
-class PermissionController {
+class ModuleController {
   async store(req: Request, res: Response) {
     const { name, description } = req.body
 
@@ -41,11 +41,11 @@ class PermissionController {
 
   async show(req: Request, res: Response) {
     const { id } = req.params
-    const modules = await ModuleRepository().findOne(id, {
-      relations: ['lesson'],
+    const modules = await ModuleRepository().findOne(id)
+    const lessons = await LessonRepository().find({
+      where: { modules: modules.id },
     })
-
-    res.json(modules)
+    res.json([modules, lessons])
   }
 
   async index(req: Request, res: Response) {
@@ -112,4 +112,4 @@ class PermissionController {
   }
 }
 
-export default new PermissionController()
+export default new ModuleController()

@@ -39,7 +39,6 @@ routes.post(
     .withMessage('A senha deve conter conter no mínimo 8 digitos!'),
   UserController.store
 )
-
 routes.put(
   '/users/:id',
   multer(multerConfig).single('avatar_url'),
@@ -61,9 +60,7 @@ routes.put(
   is(['ADMIN', 'USER']),
   UserController.update
 )
-
 routes.get('/users', ensureAuthenticated(), is(['ADMIN']), UserController.index)
-
 routes.delete(
   '/users/:id',
   param('id').isUUID().withMessage('Usuário não encontrado!'),

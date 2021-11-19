@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne } from 'typeorm'
+import { Column, Entity, ManyToOne, JoinTable, JoinColumn } from 'typeorm'
 
 import { BaseEntity } from './BaseEntity'
 import { Module } from './Module'
@@ -15,5 +15,5 @@ export class Lesson extends BaseEntity {
   lesson_url: string
 
   @ManyToOne(() => Module, (module) => module.id)
-  module: Module
+  modules: Module
 }
