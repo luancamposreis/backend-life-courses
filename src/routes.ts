@@ -70,12 +70,7 @@ routes.delete(
 )
 
 // Permission Routes
-routes.get(
-  '/permissions',
-  ensureAuthenticated(),
-  is(['ADMIN']),
-  PermissionController.index
-)
+routes.get('/permissions', PermissionController.index)
 routes.post(
   '/permissions',
   body('name')
@@ -85,13 +80,11 @@ routes.post(
   body('description')
     .isLength({ min: 4 })
     .withMessage('Descrição da permissão deve conter no minímo 4 caractere'),
-  ensureAuthenticated(),
-  is(['ADMIN']),
   PermissionController.store
 )
 
 // Role Routes
-routes.get('/roles', ensureAuthenticated(), is(['ADMIN']), RoleController.index)
+routes.get('/roles', RoleController.index)
 routes.post(
   '/roles',
   body('name')
@@ -104,8 +97,6 @@ routes.post(
   body('permissions')
     .isLength({ min: 4 })
     .withMessage('Permissão da role deve conter no minímo 4 caractere'),
-  ensureAuthenticated(),
-  is(['ADMIN']),
   RoleController.store
 )
 

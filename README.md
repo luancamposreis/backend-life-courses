@@ -41,9 +41,6 @@ Durante o desenvolvimento, foi utilizando o `NodeJS` v16.13.0, `Express`, ORM `T
     // Rodar as migrations
     $ yarn typeorm migration:run
 
-    // Rodar os Seeds
-    $ yarn seed:run
-
     // Iniciar projeto
     $ yarn dev
 ```
