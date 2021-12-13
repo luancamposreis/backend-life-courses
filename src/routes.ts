@@ -61,6 +61,12 @@ routes.put(
   UserController.update
 )
 routes.get('/users', ensureAuthenticated(), is(['ADMIN']), UserController.index)
+routes.get(
+  '/users/me',
+  ensureAuthenticated(),
+  is(['ADMIN', 'USER_NORMAL']),
+  UserController.show
+)
 routes.delete(
   '/users/:id',
   param('id').isUUID().withMessage('Usuário não encontrado!'),

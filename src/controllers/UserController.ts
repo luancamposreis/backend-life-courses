@@ -34,7 +34,9 @@ class UserController {
 
     let existRoles
     if (roles === undefined) {
-      existRoles = await RoleRepository().find({ where: { name: 'USER' } })
+      existRoles = await RoleRepository().find({
+        where: { name: 'USER_NORMAL' },
+      })
     } else {
       existRoles = await RoleRepository().findByIds(roles)
     }
@@ -59,6 +61,21 @@ class UserController {
     user.forEach((element) => {
       delete element.password_hash
     })
+
+    return res.json(user)
+  }
+
+  async show(req: Request, res: Response) {
+    const user_id = req.userId
+
+    console.log(user_id)
+
+    const user = await UserRepository().findOne({ id: user_id })
+
+    if (!user)
+      return res.status(400).json({ error: 'usuário não autenticado!' })
+
+    delete user.password_hash
 
     return res.json(user)
   }
